@@ -6,7 +6,7 @@ from fastapi.security import APIKeyCookie
 from fastapi_auth.transport.base import BaseTransport
 
 
-class Cookie(BaseTransport):
+class CookieService(BaseTransport):
     scheme: APIKeyCookie
 
     def __init__(

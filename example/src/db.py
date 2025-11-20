@@ -1,7 +1,5 @@
-from typing import Mapping
-
 from sqlalchemy import select, update, insert, delete
-from sqlalchemy.orm import DeclarativeBase, mapped_column
+from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from fastapi_auth import UserProtocol
@@ -12,9 +10,11 @@ class Base(DeclarativeBase):
 
 
 class User(Base, UserProtocol):
-    id: Mapping[int] = mapped_column(index=True, unique=True, primary_key=True)
-    username: Mapping[str] = mapped_column()
-    password: Mapping[str] = mapped_column()
+    __tablename__ = "Users"
+
+    id: Mapped[int] = mapped_column(index=True, unique=True, primary_key=True)
+    username: Mapped[str] = mapped_column()
+    password: Mapped[str] = mapped_column()
 
 
 class SQLService:
@@ -50,7 +50,6 @@ class SQLService:
         return result.scalars().all()
 
     async def create(self, *args, **data):
-        print(args)
         await self.session.execute(
             insert(self.model).
             values(*args, **data)

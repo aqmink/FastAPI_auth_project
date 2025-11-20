@@ -3,7 +3,7 @@ from typing import Protocol, Generic, Any
 from fastapi_auth.token_service.db import models
 
 
-class BaseTokenService(Protocol, Generic[models.TP]):
+class BaseTokenDB(Protocol, Generic[models.TP]):
     async def get(self, token: str) -> models.TP | None: 
         ...
     

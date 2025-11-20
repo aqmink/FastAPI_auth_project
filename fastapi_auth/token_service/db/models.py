@@ -7,7 +7,7 @@ from fastapi_auth import models
 class TokenProtocol(Protocol):
     token: str
     user_id: models.ID
-    created_at: datetime
+    expires: datetime
 
 
 TP = TypeVar("TP", bound=TokenProtocol)

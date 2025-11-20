@@ -1,6 +1,6 @@
 from typing import Generic
 
-from fastapi import Response, status
+from fastapi import Response, status, HTTPException
 
 from fastapi_auth.transport.base import BaseTransport
 from fastapi_auth.token_service.base import BaseTokenService
@@ -16,6 +16,8 @@ class Authentication(Generic[models.UP, models.ID]):
         self.token_servce = get_token_service
 
     async def login(self, user: models.UP):
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         return self.transport.login_response(
             await self.token_servce.write_token(user)
         )
