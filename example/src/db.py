@@ -1,20 +1,26 @@
+from typing import Generic
+
 from sqlalchemy import select, update, insert, delete
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_auth import UserProtocol
+from fastapi_auth import ID
 
 
 class Base(DeclarativeBase):
     pass
 
 
-class User(Base, UserProtocol):
+class UserBase(Generic[ID]):
     __tablename__ = "Users"
 
     id: Mapped[int] = mapped_column(index=True, unique=True, primary_key=True)
     username: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
+
+
+class User(UserBase, Base):
+    pass
 
 
 class SQLService:
@@ -29,9 +35,6 @@ class SQLService:
             filter_by(**params)
         )
         return result.scalars().first()
-    
-    async def get_by_username(self, username):
-        return await self.get(username=username)
 
     async def get_all(
         self,
