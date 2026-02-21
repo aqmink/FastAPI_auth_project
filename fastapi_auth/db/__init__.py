@@ -1,6 +1,6 @@
-from .base import BaseUserService
+from .base import BaseUserDatabase
 
 
 __all__ = [
-    "BaseUserService",
+    "BaseUserDatabase",
 ]

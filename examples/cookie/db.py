@@ -4,7 +4,8 @@ from sqlalchemy import select, update, insert, delete
 from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from fastapi_auth import ID
+from fastapi_auth import ID, UP
+from fastapi_auth import BaseUserDatabase
 
 
 class Base(DeclarativeBase):
@@ -23,7 +24,7 @@ class User(UserBase, Base):
     pass
 
 
-class SQLService:
+class UserDatabase(BaseUserDatabase[UP, ID]):
     def __init__(self, model: Base, session: AsyncSession) -> None:
         self.model = model
         self.session = session
@@ -35,22 +36,6 @@ class SQLService:
             filter_by(**params)
         )
         return result.scalars().first()
-
-    async def get_all(
-        self,
-        *filter,
-        limit: int = 0, 
-        offset: int = 50, 
-        **params
-    ):
-        result = await self.session.execute(
-            select(self.model).
-            filter(*filter).
-            filter_by(**params).
-            offset(offset).
-            limit(limit)
-        )
-        return result.scalars().all()
 
     async def create(self, *args, **data):
         await self.session.execute(

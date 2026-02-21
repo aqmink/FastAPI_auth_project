@@ -3,7 +3,7 @@ from typing import Generic, Any
 from fastapi_auth import models
 
 
-class BaseUserService(Generic[models.ID, models.UP]):
+class BaseUserDatabase(Generic[models.ID, models.UP]):
     async def get(self, id: models.ID) -> models.UP: 
         ...
     
