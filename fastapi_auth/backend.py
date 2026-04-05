@@ -1,6 +1,6 @@
 from typing import Generic, Literal
 
-from fastapi import Response, status, HTTPException
+from fastapi import Response, status
 
 from fastapi_auth.token_storage.base import BaseStorage
 from fastapi_auth.token_service.base import BaseTokenService

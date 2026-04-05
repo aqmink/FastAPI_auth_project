@@ -27,7 +27,9 @@ class FastAPIAuth(Generic[models.UP, models.ID]):
     async def login(
         self, 
         user: models.UP,
+        user_service: BaseUserDatabase[models.UP, models.ID]
     ):
+        await user_service.update(user.id, is_active=True)
         if not user:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
         return await self._get_token_pair(user)
@@ -44,17 +46,17 @@ class FastAPIAuth(Generic[models.UP, models.ID]):
     async def refresh(
         self,
         token: str,
-        user_service: BaseUserDatabase[models.ID, models.UP]
+        user_service: BaseUserDatabase[models.UP, models.ID]
     ):
         for backend in self.backends:
             user, token_type = await backend.token_service.read_token(
                 token, user_service
             )
-            print(user, token_type)
             if user and token_type != "refresh_token":
-                break
-        if not user:
+                user = None
+        if not user or not user.is_active:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+        user = await user_service.update(user.id, is_active=False)
         return await self._get_token_pair(user)
     
     async def _get_token_pair(self, user: models.UP):

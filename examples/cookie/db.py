@@ -18,6 +18,8 @@ class UserBase(Generic[ID]):
     id: Mapped[int] = mapped_column(index=True, unique=True, primary_key=True)
     username: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
+    is_active: Mapped[bool] = mapped_column(default=True)
+    is_superuser: Mapped[bool] = mapped_column(default=False)
 
 
 class User(UserBase, Base):
@@ -44,13 +46,14 @@ class UserDatabase(BaseUserDatabase[UP, ID]):
         )
         await self.session.commit()
 
-    async def update(self, *filter, **data):
+    async def update(self, user_id, **data):
         await self.session.execute(
             update(self.model).
-            filter(*filter).
+            filter_by(id=user_id).
             values(**data)
         )
         await self.session.commit()
+        return await self.get(id=user_id)
 
     async def delete(self, *filter, **params):
         await self.session.execute(

@@ -57,8 +57,9 @@ class Authenticator(Generic[models.ID, models.UP]):
                 user_service=user_service,
                 **kwargs,
             )
-            if not user:
+            if not user or not user.is_active:
                 raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+            user = await user_service.update(user.id, is_active=True)
             return user
 
         return current_user_dependency
